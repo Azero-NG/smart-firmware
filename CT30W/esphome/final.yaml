@@ -1,0 +1,144 @@
+esphome:
+  name: ct30w-open
+  friendly_name: CT30W Button Reset
+  includes:
+    - boot_compat.h
+  on_boot:
+    - priority: 800
+      then:
+        - lambda: disable_extra4k_at_link_time();
+
+esp8266:
+  board: esp_wroom_02
+  board_flash_mode: dout
+  early_pin_init: false
+  restore_from_flash: false
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [ct30w_stock_ota]
+
+logger:
+  baud_rate: 115200
+
+wifi:
+  id: wifi_main
+  ap:
+    ssid: CT30W-Open-Setup
+
+captive_portal:
+
+web_server:
+  port: 80
+
+ct30w_stock_ota:
+  id: stock_ota
+
+api:
+  reboot_timeout: 0s
+  actions:
+    - action: run_sweep
+      then:
+        - script.execute: pin_sweep
+
+ota:
+  - platform: esphome
+
+binary_sensor:
+  - platform: gpio
+    id: body_button
+    name: Body Button
+    internal: true
+    pin:
+      number: GPIO4
+      inverted: true
+      mode: INPUT_PULLUP
+    filters:
+      - delayed_on_off: 30ms
+    on_press:
+      - script.execute: long_press_reset
+    on_release:
+      - script.stop: long_press_reset
+    on_click:
+      - min_length: 50ms
+        max_length: 2s
+        then:
+          - logger.log: "Body button short press: rebooting"
+          - button.press: restart_device
+
+button:
+  - platform: restart
+    id: restart_device
+    name: Restart
+    internal: true
+  - platform: factory_reset
+    id: factory_reset_device
+    name: Factory Reset
+    internal: true
+
+remote_receiver:
+  id: ir_rx
+  pin:
+    number: GPIO5
+    inverted: true
+    mode: INPUT_PULLUP
+  dump: all
+  tolerance: 50%
+  filter: 50us
+  idle: 10ms
+  buffer_size: 2kb
+
+output:
+  - platform: esp8266_pwm
+    id: sw_0
+    pin: GPIO0
+    frequency: 38000
+  - platform: esp8266_pwm
+    id: sw_2
+    pin: GPIO2
+    frequency: 38000
+  - platform: esp8266_pwm
+    id: sw_12
+    pin: GPIO12
+    frequency: 38000
+  - platform: esp8266_pwm
+    id: sw_14
+    pin: GPIO14
+    frequency: 38000
+  - platform: esp8266_pwm
+    id: sw_15
+    pin: GPIO15
+    frequency: 38000
+
+script:
+  - id: long_press_reset
+    mode: restart
+    then:
+      - delay: 3s
+      - logger.log: "Body button held 3s: clearing saved configuration"
+      - button.press: factory_reset_device
+  - id: pin_sweep
+    then:
+      - lambda: ESP_LOGD("sweep", "SWEEP START");
+      - lambda: id(sw_0).set_level(0.5); ESP_LOGD("sweep", "ON GPIO0");
+      - delay: 2500ms
+      - lambda: id(sw_0).set_level(0.0);
+      - delay: 2000ms
+      - lambda: id(sw_2).set_level(0.5); ESP_LOGD("sweep", "ON GPIO2");
+      - delay: 2500ms
+      - lambda: id(sw_2).set_level(0.0);
+      - delay: 2000ms
+      - lambda: id(sw_12).set_level(0.5); ESP_LOGD("sweep", "ON GPIO12");
+      - delay: 2500ms
+      - lambda: id(sw_12).set_level(0.0);
+      - delay: 2000ms
+      - lambda: id(sw_14).set_level(0.5); ESP_LOGD("sweep", "ON GPIO14");
+      - delay: 2500ms
+      - lambda: id(sw_14).set_level(0.0);
+      - delay: 2000ms
+      - lambda: id(sw_15).set_level(0.5); ESP_LOGD("sweep", "ON GPIO15");
+      - delay: 2500ms
+      - lambda: id(sw_15).set_level(0.0);
+      - lambda: ESP_LOGD("sweep", "SWEEP DONE");

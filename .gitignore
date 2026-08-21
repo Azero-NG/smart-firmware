@@ -1,0 +1,18 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# ESPHome & Builds
+build/
+.esphome/
+*.bin.orig
+secrets.yaml
+
+# OS & IDE
+.DS_Store
+.vscode/
+.idea/
+*.swp
