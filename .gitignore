@@ -16,3 +16,6 @@ secrets.yaml
 .vscode/
 .idea/
 *.swp
+
+# X1S local gateway settings
+X1S/config.env
