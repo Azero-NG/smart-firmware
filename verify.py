@@ -35,9 +35,27 @@ EXPECTED_FILES = (
     "CT30W/tools/paced_server_test.go",
     "CT30W/tools/upload_uncompressed.py",
     "CT30W/tools/invoke_service.py",
+    "X1S/README.md",
+    "X1S/verify.py",
+    "X1S/config.example.env",
+    "X1S/firmware/x1s-local-1.18.301.rbl",
+    "X1S/postflash/x1s_gpio.json",
+    "X1S/postflash/x1s_led_off.json",
+    "X1S/tools/formal_server.py",
+    "X1S/tools/apply_gpio.py",
+    "X1S/tools/setup_adapter.sh",
+    "X1S/tools/cleanup_adapter.sh",
+    "X1S/tools/openwrt_dhcp_setup.sh",
+    "X1S/tools/openwrt_dhcp_cleanup.sh",
+    "X1S/tools/arm.sh",
+    "X1S/tools/refresh_fota_ips.sh",
 )
 
 EXPECTED_BINARIES = {
+    "X1S/firmware/x1s-local-1.18.301.rbl": (
+        521_664,
+        "0d0d0b63feb0723356c7c64fd2664e8b73f90f711e2cfbdeb926b53fb9799374",
+    ),
     "CT30W/firmware/CT30W_ESPHome_final_native.bin": (
         441_520,
         "2a8fd3be52b4ecee66a4d274ea1966b4e76bac85b02c6274e4bda4a3b883e786",
@@ -121,7 +139,7 @@ def check_sanitized_and_self_contained() -> None:
         for forbidden in FORBIDDEN_TEXT:
             if forbidden in text:
                 fail(f"forbidden reference {forbidden!r} in {path.relative_to(ROOT)}")
-    for guide in (ROOT / "CT30W/README.md",):
+    for guide in (ROOT / "CT30W/README.md", ROOT / "X1S/README.md"):
         text = guide.read_text(encoding="utf-8")
         if "<" not in text or ">" not in text:
             fail(f"guide lacks explicit placeholders: {guide}")
@@ -160,7 +178,7 @@ def check_shell() -> None:
 
 def check_executable_bits() -> None:
     shell_paths = [path for path in ROOT.rglob("*.sh") if not is_generated(path)]
-    for path in shell_paths + [ROOT / "verify.py", ROOT / "CT30W/verify.py"]:
+    for path in shell_paths + [ROOT / "verify.py", ROOT / "CT30W/verify.py", ROOT / "X1S/verify.py"]:
         if not os.access(path, os.X_OK):
             fail(f"expected executable bit: {path.relative_to(ROOT)}")
 

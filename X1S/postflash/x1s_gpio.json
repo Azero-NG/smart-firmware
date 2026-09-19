@@ -1,0 +1,13 @@
+{
+  "pre_apply_command": "setChannel 1 0",
+  "post_apply_command": "setChannel 1 0",
+  "pins": {
+    "6": {"role": 18, "channel": 0, "channel2": 0},
+    "7": {"role": 19, "channel": 0, "channel2": 0},
+    "8": {"role": 1, "channel": 1, "channel2": 0},
+    "10": {"role": 6, "channel": 1, "channel2": 0},
+    "11": {"role": 9, "channel": 0, "channel2": 0},
+    "24": {"role": 3, "channel": 1, "channel2": 0},
+    "26": {"role": 17, "channel": 0, "channel2": 0}
+  }
+}

@@ -11,7 +11,7 @@ Smart IoT device firmware migration toolchain, pre-built binaries, and guides. F
 | Device / 型号 | Chip / 芯片 | Baseline / 原厂基线 | Target Firmware / 目标固件 | Status / 状态 | Guide / 文档 |
 | :--- | :--- | :--- | :--- | :---: | :--- |
 | **ORVIBO CT30W** (欧瑞博) | ESP8266 | `CT30_XY` / CMCC v2.0.15 | ESPHome 2026.7.4 | ✅ Ready | [CT30W Guide](CT30W/README.md) |
-| **X1S** (产品类型 `590384`) | BK7231N | 原厂 1.0.4 | OpenBeken 1.18.301 | ⏳ Planned | *Coming Soon* |
+| **X1S** (产品类型 `590384`) | BK7231N | 原厂 1.0.4 | OpenBeken 1.18.301 | ✅ Ready | [X1S Guide](X1S/README.md) |
 
 ---
 
@@ -21,6 +21,11 @@ Smart IoT device firmware migration toolchain, pre-built binaries, and guides. F
 适用于搭载 ESP8266 的 ORVIBO CT30W 智能插座（原厂基线 `CT30_XY`、CMCC v2.0.15），通过局域网 OOBE OTA -> eboot 迁移 -> 最终写入 ESPHome 原生固件。
 
 详情请直接参阅：[👉 CT30W 详细免拆刷机指引](CT30W/README.md)
+
+### 2. X1S
+适用于产品类型 `590384`、BK7231N、原厂固件 `1.0.4` 的 X1S，通过 Linux 临时网关进行一次性 OTA，迁移至 OpenBeken `1.18.301`。目录包含固定版本固件、刷机工具和插座引脚配置。
+
+详情请直接参阅：[👉 X1S 详细免拆刷机指引](X1S/README.md)
 
 ---
 
@@ -32,7 +37,13 @@ Smart IoT device firmware migration toolchain, pre-built binaries, and guides. F
 python3 verify.py
 ```
 
-自检仅校验本地文件、构包逻辑与散列值，不会对真实局域网设备产生任何影响。
+仓库自检校验本地文件、散列值和脚本语法。X1S 的刷机服务离线自检另行执行：
+
+```bash
+python3 X1S/verify.py
+```
+
+这些检查不会向真实局域网设备发送刷机请求。
 
 ---
 
